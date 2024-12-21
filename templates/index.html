@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Esakal Digital Migration Tool</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background-image: url("https://images.unsplash.com/photo-1566378246598-5b11a0d486cc?auto=format&fit=crop&w=2000&q=80");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+      }
+      .glass-container {
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 193, 7, 0.2);
+      }
+      .dropzone {
+        border: 2px dashed #ffc107;
+        border-radius: 12px;
+        background: linear-gradient(
+          145deg,
+          rgba(26, 26, 26, 0.9),
+          rgba(38, 38, 38, 0.9)
+        );
+        text-align: center;
+        padding: 40px;
+        transition: all 0.3s ease;
+      }
+      .dropzone:hover {
+        border-color: #ffd700;
+        background: linear-gradient(
+          145deg,
+          rgba(38, 38, 38, 0.9),
+          rgba(26, 26, 26, 0.9)
+        );
+        transform: translateY(-2px);
+      }
+      .dropzone input {
+        display: none;
+      }
+      .results-card {
+        border: 1px solid rgba(255, 193, 7, 0.2);
+        border-radius: 12px;
+        background: rgba(26, 26, 26, 0.9);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+      }
+      .results-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+      }
+      .yellow-glow {
+        box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+      }
+      .btn-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+      }
+      .newspaper-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .newspaper-item {
+        text-align: center;
+        padding: 1rem;
+        background: rgba(26, 26, 26, 0.8);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 193, 7, 0.2);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen py-12">
+    <div class="max-w-4xl w-full px-4 mx-auto">
+      <div class="glass-container p-8 rounded-xl">
+        <!-- Header -->
+        <div class="flex items-center justify-center mb-8">
+          <img
+            src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=80&h=80&fit=crop&auto=format"
+            alt="Esakal Logo"
+            class="w-20 h-20 rounded-lg mr-4 object-cover"
+          />
+          <div>
+            <h1 class="text-5xl font-bold text-yellow-400 mb-2">
+              Esakal Digital
+            </h1>
+            <p class="text-gray-400">PDF Processing & Migration Tool</p>
+          </div>
+        </div>
+
+        <!-- Newspaper Selection -->
+        <div class="mb-8">
+          <h2
+            class="text-xl font-semibold text-yellow-400 mb-4 flex items-center"
+          >
+            <i data-lucide="newspaper" class="w-6 h-6 mr-2"></i>
+            Select Edition
+          </h2>
+          <div class="newspaper-grid">
+            <div class="newspaper-item">
+              <img
+                src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=100&h=100&fit=crop&auto=format"
+                alt="Pune"
+                class="w-16 h-16 mx-auto rounded-lg mb-2"
+              />
+              <span class="text-yellow-400">Pune</span>
+            </div>
+            <div class="newspaper-item">
+              <img
+                src="https://images.unsplash.com/photo-1529243856184-fd5465488984?w=100&h=100&fit=crop&auto=format"
+                alt="Mumbai"
+                class="w-16 h-16 mx-auto rounded-lg mb-2"
+              />
+              <span class="text-yellow-400">Mumbai</span>
+            </div>
+            <div class="newspaper-item">
+              <img
+                src="https://images.unsplash.com/photo-1568213816046-0ee1c42bd559?w=100&h=100&fit=crop&auto=format"
+                alt="Nagpur"
+                class="w-16 h-16 mx-auto rounded-lg mb-2"
+              />
+              <span class="text-yellow-400">Nagpur</span>
+            </div>
+            <div class="newspaper-item">
+              <img
+                src="https://images.unsplash.com/photo-1516563670759-299070f0dc54?w=100&h=100&fit=crop&auto=format"
+                alt="Kolhapur"
+                class="w-16 h-16 mx-auto rounded-lg mb-2"
+              />
+              <span class="text-yellow-400">Kolhapur</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drag and Drop Upload Form -->
+        <div class="dropzone mb-8 yellow-glow" id="dropzone">
+          <form id="uploadForm">
+            <input type="file" id="pdfFile" name="file" accept=".pdf" />
+            <i
+              data-lucide="file-up"
+              class="w-16 h-16 mx-auto mb-4 text-yellow-400"
+            ></i>
+            <p class="text-yellow-400 font-medium text-xl">
+              Upload Newspaper PDF
+            </p>
+            <p class="text-gray-400 mb-4">
+              Drag & drop your PDF here or click to browse
+            </p>
+            <button
+              type="button"
+              onclick="document.getElementById('pdfFile').click()"
+              class="bg-yellow-400 text-black py-3 px-8 rounded-lg font-semibold hover:bg-yellow-300 focus:ring-2 focus:ring-yellow-500 transition-all btn-hover"
+            >
+              Select PDF
+            </button>
+            <p class="mt-4 text-sm text-gray-400">
+              Supported format: PDF | Maximum size: 15MB
+            </p>
+          </form>
+        </div>
+
+        <!-- Process PDF Button -->
+        <div class="text-center mb-8">
+          <button
+            id="processBtn"
+            class="bg-yellow-400 text-black py-3 px-12 rounded-lg font-semibold hover:bg-yellow-300 focus:ring-2 focus:ring-yellow-500 transition-all text-lg btn-hover flex items-center mx-auto"
+          >
+            <i data-lucide="cpu" class="w-5 h-5 mr-2"></i>
+            Process & Extract
+          </button>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div
+          id="loading"
+          class="flex justify-center items-center space-x-3 mb-8 hidden"
+        >
+          <div
+            class="animate-spin rounded-full h-10 w-10 border-b-2 border-yellow-400"
+          ></div>
+          <span class="text-yellow-400 text-lg"
+            >Processing newspaper content...</span
+          >
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="space-y-8 hidden">
+          <!-- XML Result -->
+          <div class="results-card p-6">
+            <h3
+              class="text-xl font-semibold text-yellow-400 mb-4 flex items-center"
+            >
+              <i data-lucide="file-code" class="w-6 h-6 mr-2"></i>
+              Generated XML for Mobile App
+            </h3>
+            <button
+              id="openXmlBtn"
+              class="bg-yellow-400 text-black py-2 px-6 rounded-lg font-semibold hover:bg-yellow-300 focus:ring-2 focus:ring-yellow-500 transition-all btn-hover flex items-center"
+            >
+              <i data-lucide="external-link" class="w-5 h-5 mr-2"></i>
+              View XML
+            </button>
+          </div>
+
+          <!-- Extracted Images -->
+          <div class="results-card p-6">
+            <h3
+              class="text-xl font-semibold text-yellow-400 mb-4 flex items-center"
+            >
+              <i data-lucide="images" class="w-6 h-6 mr-2"></i>
+              Extracted News Images
+            </h3>
+            <div
+              id="imageGallery"
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6"
+            >
+              <!-- Images will be inserted here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div
+          id="error"
+          class="hidden max-w-lg mx-auto bg-red-900 border border-red-700 text-red-200 px-6 py-4 rounded-lg relative mt-6"
+        >
+          <i data-lucide="alert-triangle" class="w-5 h-5 inline-block mr-2"></i>
+          <span id="errorMessage"></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("pdfFile");
+      const processBtn = document.getElementById("processBtn");
+
+      dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = "#FFD700";
+      });
+
+      dropzone.addEventListener("dragleave", () => {
+        dropzone.style.borderColor = "#FFC107";
+      });
+
+      dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = "#FFC107";
+        fileInput.files = e.dataTransfer.files;
+      });
+
+      processBtn.addEventListener("click", async () => {
+        const file = fileInput.files[0];
+        if (!file) {
+          showError("Please select a newspaper PDF file");
+          return;
+        }
+
+        const loading = document.getElementById("loading");
+        const results = document.getElementById("results");
+        const error = document.getElementById("error");
+
+        loading.classList.remove("hidden");
+        results.classList.add("hidden");
+        error.classList.add("hidden");
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          const response = await axios.post("/process_pdf", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+
+          document.getElementById("openXmlBtn").onclick = () =>
+            window.open(response.data.xml_url, "_blank");
+
+          const imageGallery = document.getElementById("imageGallery");
+          imageGallery.innerHTML = response.data.images
+            .map(
+              (img) =>
+                `<div class="results-card overflow-hidden">
+                   <div class="relative group">
+                     <img src="${img.url}" alt="${img.caption}" class="w-full h-48 object-cover" />
+                     <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                       <button
+                         onclick="window.open('${img.url}', '_blank')"
+                         class="bg-yellow-400 text-black py-2 px-4 rounded-lg font-semibold hover:bg-yellow-300 focus:ring-2 focus:ring-yellow-500 transition-all btn-hover flex items-center"
+                       >
+                         <i data-lucide="eye" class="w-4 h-4 mr-2"></i>
+                         View Image
+                       </button>
+                     </div>
+                   </div>
+                   <div class="p-4">
+                     <p class="text-gray-300 text-sm">${img.caption}</p>
+                   </div>
+                 </div>`
+            )
+            .join("");
+
+          // Reinitialize Lucide icons for dynamically added content
+          lucide.createIcons();
+          results.classList.remove("hidden");
+        } catch (err) {
+          showError("An error occurred while processing the newspaper PDF");
+        } finally {
+          loading.classList.add("hidden");
+        }
+      });
+
+      function showError(message) {
+        const error = document.getElementById("error");
+        const errorMessage = document.getElementById("errorMessage");
+        errorMessage.textContent = message;
+        error.classList.remove("hidden");
+      }
+    </script>
+  </body>
+</html>
