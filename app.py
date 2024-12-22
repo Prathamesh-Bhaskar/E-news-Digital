@@ -9,6 +9,8 @@ from PIL import Image, ImageOps
 import io
 import logging
 import xml.etree.ElementTree as ET
+from dotenv import load_dotenv
+load_dotenv()
 
 # Flask app configuration
 app = Flask(__name__)
@@ -405,4 +407,5 @@ def serve_xml(filename):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    port = int(os.getenv("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
