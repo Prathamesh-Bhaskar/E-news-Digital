@@ -3,3 +3,4 @@ flask
 werkzeug
 pymupdf
 pillow
+python-dotenv
